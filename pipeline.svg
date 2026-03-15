@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+    <linearGradient id="gpuGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#76b900;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#76b900;stop-opacity:0.05"/>
+    </linearGradient>
+    <linearGradient id="cpuGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0071c5;stop-opacity:0.12"/>
+      <stop offset="100%" style="stop-color:#0071c5;stop-opacity:0.04"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Title -->
+  <text x="450" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#222">pMMC Pipeline: Multiscale Monte Carlo for 3D Chromatin Structure</text>
+
+  <!-- GPU region background -->
+  <rect x="290" y="50" width="600" height="450" rx="12" fill="url(#gpuGrad)" stroke="#76b900" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="870" y="72" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="#76b900" font-weight="bold">GPU (CUDA)</text>
+
+  <!-- CPU region background -->
+  <rect x="10" y="50" width="270" height="450" rx="12" fill="url(#cpuGrad)" stroke="#0071c5" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="20" y="72" font-family="Arial, sans-serif" font-size="12" fill="#0071c5" font-weight="bold">CPU</text>
+
+  <!-- Input Data Box -->
+  <rect x="30" y="85" width="230" height="75" rx="8" fill="#e8f0fe" stroke="#4285f4" stroke-width="1.5"/>
+  <text x="145" y="108" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#1a73e8">Input Data</text>
+  <text x="145" y="126" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#444">ChIA-PET anchors (.bed)</text>
+  <text x="145" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#444">PET clusters (.bedpe)</text>
+  <text x="145" y="154" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#444">Singletons, segments, centromeres</text>
+
+  <!-- Arrow from Input to Tree Construction -->
+  <line x1="145" y1="160" x2="145" y2="185" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Tree Construction Box -->
+  <rect x="30" y="190" width="230" height="55" rx="8" fill="#fff3e0" stroke="#ff8f00" stroke-width="1.5"/>
+  <text x="145" y="213" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#e65100">Hierarchical Tree Construction</text>
+  <text x="145" y="230" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#444">4-level cluster tree (chr > seg > anchor > sub)</text>
+
+  <!-- Arrow from Tree to Arc Marking -->
+  <line x1="260" y1="217" x2="310" y2="217" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Phase 0: Arc Marking (GPU) -->
+  <rect x="315" y="190" width="250" height="55" rx="8" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+  <text x="440" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2e7d32">Phase 0: ParallelMarkArcs</text>
+  <text x="440" y="228" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#444">Map genomic arcs to anchor indices</text>
+  <text x="440" y="240" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#888">256 blocks x 1024 threads</text>
+
+  <!-- Arrow down to Phase 1 -->
+  <line x1="440" y1="245" x2="440" y2="270" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Phase 1: Heatmap MC (GPU) -->
+  <rect x="315" y="275" width="250" height="70" rx="8" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+  <text x="440" y="295" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2e7d32">Phase 1: Heatmap MC</text>
+  <text x="440" y="312" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#444">Chromosome + segment positioning</text>
+  <text x="440" y="327" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#444">Singleton contact frequency heatmaps</text>
+  <text x="440" y="340" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#888">FP16 positions, Metropolis SA</text>
+
+  <!-- MDS Init box (CPU) -->
+  <rect x="30" y="280" width="230" height="50" rx="8" fill="#f3e5f5" stroke="#8e24aa" stroke-width="1.5"/>
+  <text x="145" y="302" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#6a1b9a">MDS Initialization</text>
+  <text x="145" y="318" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#444">Classical Torgerson MDS (optional)</text>
+
+  <!-- Arrow from MDS to Heatmap -->
+  <line x1="260" y1="305" x2="310" y2="310" stroke="#8e24aa" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+
+  <!-- Arrow down to Phase 2 -->
+  <line x1="440" y1="345" x2="440" y2="370" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Phase 2: Arcs MC (GPU) -->
+  <rect x="315" y="375" width="250" height="60" rx="8" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+  <text x="440" y="395" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2e7d32">Phase 2: ParallelMC Arcs</text>
+  <text x="440" y="412" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#444">Anchor positioning via PET distances</text>
+  <text x="440" y="427" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#888">Warp-level SA, GpuResourceCache</text>
+
+  <!-- Arrow to Phase 3 -->
+  <line x1="565" y1="405" x2="605" y2="405" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Phase 3: Smooth MC (GPU) -->
+  <rect x="610" y="375" width="260" height="60" rx="8" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+  <text x="740" y="395" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#2e7d32">Phase 3: ParallelMC Smooth</text>
+  <text x="740" y="412" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#444">Subanchor chain smoothing</text>
+  <text x="740" y="427" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#888">Bond length + angular energy, SA</text>
+
+  <!-- Energy scoring (CPU) -->
+  <rect x="30" y="370" width="230" height="55" rx="8" fill="#fce4ec" stroke="#c62828" stroke-width="1.5"/>
+  <text x="145" y="393" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#b71c1c">Energy Scoring Functions</text>
+  <text x="145" y="410" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#444">Distance, loop, orientation, density,</text>
+  <text x="145" y="422" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#444">heatmap, subanchor (7 components)</text>
+
+  <!-- Arrow from scoring to Arcs -->
+  <line x1="260" y1="397" x2="310" y2="397" stroke="#c62828" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+
+  <!-- Output Box -->
+  <rect x="610" y="460" width="260" height="35" rx="8" fill="#e0f7fa" stroke="#00838f" stroke-width="1.5"/>
+  <text x="740" y="483" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#006064">Output: HCM / mmCIF / PDB</text>
+
+  <!-- Arrow from Smooth to Output -->
+  <line x1="740" y1="435" x2="740" y2="455" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- GpuResourceCache annotation -->
+  <rect x="610" y="275" width="260" height="55" rx="8" fill="#fff8e1" stroke="#f9a825" stroke-width="1.5"/>
+  <text x="740" y="298" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#f57f17">GpuResourceCache</text>
+  <text x="740" y="315" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#444">Persistent curandState + buffers</text>
+  <text x="740" y="328" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#888">Eliminates per-block alloc overhead</text>
+
+  <!-- Dashed lines from cache to arcs/smooth -->
+  <line x1="740" y1="330" x2="565" y2="390" stroke="#f9a825" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="740" y1="330" x2="740" y2="370" stroke="#f9a825" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <!-- Legend at bottom -->
+  <rect x="30" y="460" width="12" height="12" fill="#e8f5e9" stroke="#43a047"/>
+  <text x="48" y="471" font-family="Arial, sans-serif" font-size="10" fill="#444">GPU kernel</text>
+  <rect x="130" y="460" width="12" height="12" fill="#e8f0fe" stroke="#4285f4"/>
+  <text x="148" y="471" font-family="Arial, sans-serif" font-size="10" fill="#444">CPU data</text>
+  <rect x="220" y="460" width="12" height="12" fill="#fff8e1" stroke="#f9a825"/>
+  <text x="238" y="471" font-family="Arial, sans-serif" font-size="10" fill="#444">Optimization</text>
+
+  <!-- Highlight: pMMC vs cudaMMC annotation -->
+  <text x="30" y="490" font-family="Arial, sans-serif" font-size="9" fill="#666" font-style="italic">pMMC: all 4 phases on GPU. cudaMMC: only Phase 0-1 on GPU, Phases 2-3 on CPU.</text>
+</svg>

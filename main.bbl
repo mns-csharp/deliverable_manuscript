@@ -1,0 +1,120 @@
+\begin{thebibliography}{14}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Fudenberg et~al.(2016)Fudenberg, Imakaev, Lu, Goloborodko, Abdennur,
+  and Mirny]{bohnuud2018formation}
+G.~Fudenberg, M.~Imakaev, C.~Lu, A.~Goloborodko, N.~Abdennur, and L.~A. Mirny.
+\newblock Formation of chromosomal domains by loop extrusion.
+\newblock \emph{Cell Reports}, 15\penalty0 (9):\penalty0 2038--2049, 2016.
+\newblock \doi{10.1016/j.celrep.2016.04.085}.
+
+\bibitem[Hua et~al.(2016)Hua, Tjong, Shin, Gong, Zhou, and
+  Alber]{collepardo2020population}
+N.~Hua, H.~Tjong, H.~Shin, K.~Gong, X.~J. Zhou, and F.~Alber.
+\newblock Population-based {3D} genome structure analysis reveals driving
+  forces in spatial genome organization.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 113\penalty0
+  (12):\penalty0 E1663--E1672, 2016.
+\newblock \doi{10.1073/pnas.1512577113}.
+
+\bibitem[Korsak and Plewczynski(2024)]{sakaue2024loopsage}
+S.~Korsak and D.~Plewczynski.
+\newblock {LoopSage}: an energy-based {Monte Carlo} approach for the loop
+  extrusion modeling of chromatin.
+\newblock \emph{Methods}, 228:\penalty0 106--117, 2024.
+\newblock \doi{10.1016/j.ymeth.2024.05.015}.
+
+\bibitem[Lee et~al.(2010)Lee, Yau, Giles, Doucet, and Holmes]{lee2010utility}
+A.~Lee, C.~Yau, M.~B. Giles, A.~Doucet, and C.~C. Holmes.
+\newblock On the utility of graphics cards to perform massively parallel
+  simulation of advanced {Monte Carlo} methods.
+\newblock \emph{Journal of Computational and Graphical Statistics}, 19\penalty0
+  (4):\penalty0 769--789, 2010.
+\newblock \doi{10.1198/jcgs.2010.10039}.
+
+\bibitem[Lutz et~al.(2012)Lutz, Sinner, Heuber, Verma, and
+  Schug]{lutz2012massively}
+B.~Lutz, C.~Sinner, G.~Heuber, A.~Verma, and A.~Schug.
+\newblock Massively parallelized replica-exchange simulations of polymers on
+  {GPUs}.
+\newblock \emph{Computer Physics Communications}, 183\penalty0 (4):\penalty0
+  813--820, 2012.
+\newblock \doi{10.1016/j.cpc.2011.11.028}.
+
+\bibitem[Neguembor et~al.(2024)Neguembor, Arco, Escobar, and
+  Marti-Renom]{neguembor2024multimm}
+M.~V. Neguembor, J.~M. Arco, R.~Escobar, and M.~A. Marti-Renom.
+\newblock Multiscale molecular modeling of chromatin with {MultiMM}: from
+  nucleosomes to the whole genome.
+\newblock \emph{Genome Biology}, 25:\penalty0 233, 2024.
+\newblock \doi{10.1186/s13059-024-03380-x}.
+
+\bibitem[Nuebler et~al.(2018)Nuebler, Fudenberg, Imakaev, Abdennur, and
+  Mirny]{nuebler2018chromatin}
+J.~Nuebler, G.~Fudenberg, M.~Imakaev, N.~Abdennur, and L.~A. Mirny.
+\newblock Chromatin organization by an interplay of loop extrusion and
+  compartmental segregation.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 115\penalty0
+  (29):\penalty0 E6697--E6706, 2018.
+\newblock \doi{10.1073/pnas.1717730115}.
+
+\bibitem[Plewczynski et~al.(2026)Plewczynski, Szalaj, Saqib, and
+  Sengupta]{plewczynski2026integrated}
+D.~Plewczynski, P.~Szalaj, M.~N. Saqib, and K.~Sengupta.
+\newblock An integrated {3-Dimensional} genome modeling engine for data-driven
+  simulation of spatial genome organization.
+\newblock \emph{Genome Biology}, 27:\penalty0 42, 2026.
+\newblock \doi{10.1186/s13059-026-03256-8}.
+
+\bibitem[Rosa and Zimmer(2016)]{rosa2016polymer}
+A.~Rosa and C.~Zimmer.
+\newblock Polymer physics of chromosome large-scale {3D} organisation.
+\newblock \emph{Current Opinion in Genetics \& Development}, 34:\penalty0
+  66--73, 2016.
+\newblock \doi{10.1016/j.gde.2016.10.001}.
+
+\bibitem[Rousseau et~al.(2011)Rousseau, Fraser, Ferraiuolo, Dostie, and
+  Bhyl]{rousseau2011threed}
+M.~Rousseau, J.~Fraser, M.~A. Ferraiuolo, J.~Dostie, and M.~Bhyl.
+\newblock Three-dimensional modeling of chromatin structure from interaction
+  frequency data using {Markov chain Monte Carlo} sampling.
+\newblock \emph{BMC Bioinformatics}, 12:\penalty0 414, 2011.
+\newblock \doi{10.1186/1471-2105-12-414}.
+
+\bibitem[Saqib et~al.(2023)Saqib, Sengupta, and Plewczynski]{saqib2023cudammc}
+M.~N. Saqib, K.~Sengupta, and D.~Plewczynski.
+\newblock {cudaMMC}: {GPU}-enhanced multiscale {Monte Carlo} approach for 3{D}
+  structure modeling of the genome.
+\newblock \emph{Bioinformatics}, 39\penalty0 (9):\penalty0 btad507, 2023.
+\newblock \doi{10.1093/bioinformatics/btad507}.
+
+\bibitem[Szalaj et~al.(2016)Szalaj, Tang, Michalski, Pietal, Luo, Sadowski, Li,
+  Ruan, and Plewczynski]{szalaj2016threed}
+P.~Szalaj, Z.~Tang, P.~Michalski, M.~Pietal, O.~J. Luo, M.~Sadowski, X.~Li,
+  Y.~Ruan, and D.~Plewczynski.
+\newblock {3D-GNOME}: an integrated web service for structural modeling of the
+  {3D} genome.
+\newblock \emph{Nucleic Acids Research}, 44\penalty0 (W1):\penalty0 W288--W293,
+  2016.
+\newblock \doi{10.1093/nar/gkw437}.
+
+\bibitem[Szalaj et~al.(2023)Szalaj, Michalski, Sadowski, Tang, Ruan, and
+  Plewczynski]{szalaj2023threed3}
+P.~Szalaj, P.~Michalski, M.~Sadowski, Z.~Tang, Y.~Ruan, and D.~Plewczynski.
+\newblock {3D-GNOME} 3.0: a three-dimensional genome modelling engine for
+  analysing changes of promoter--enhancer contacts in the human genome.
+\newblock \emph{Nucleic Acids Research}, 51\penalty0 (W1):\penalty0 W19--W26,
+  2023.
+\newblock \doi{10.1093/nar/gkad390}.
+
+\bibitem[Zheng and Zheng(2018)]{zheng2018threed}
+X.~Zheng and Y.~Zheng.
+\newblock Three-dimensional organization and dynamics of the genome.
+\newblock \emph{Developmental Cell}, 45\penalty0 (4):\penalty0 421--429, 2018.
+\newblock \doi{10.1016/j.devcel.2018.05.001}.
+
+\end{thebibliography}

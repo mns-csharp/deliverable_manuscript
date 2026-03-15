@@ -1,0 +1,332 @@
+%%
+%% pMMC Application Note — ECCB 2026 Proceedings
+%% Uses OUP authoring template (oup-authoring-template.cls)
+%%
+
+%%%TRADITIONAL — matches Bioinformatics journal style (cudaMMC 2023)%%%
+\documentclass[webpdf,traditional,large]{oup-authoring-template}%
+
+\usepackage{newtxtext,newtxmath}
+\graphicspath{{figures/}}
+
+%%% Override OUP section formatting: left-aligned (matching published Bioinformatics style)
+\makeatletter
+\def\secsize{\fontsize{11.5bp}{11.75bp}\fontseries{b}\selectfont\raggedright}
+\def\subsecsize{\fontsize{10.5bp}{11.75bp}\fontseries{b}\selectfont\raggedright}
+\def\subsubsecsize{\fontsize{9.75bp}{11.75bp}\selectfont\bfseries\itshape\raggedright}
+\def\paragraphsize{\fontsize{9.5bp}{11.75bp}\selectfont\bfseries\raggedright}
+\makeatother
+
+\begin{document}
+
+\journaltitle{Bioinformatics}
+\DOI{DOI added during production}
+\copyrightyear{2026}
+\pubyear{2026}
+\vol{XX}
+\issue{x}
+\access{Published: Date added during production}
+\appnotes{Application Note}
+
+\firstpage{1}
+
+\title[pMMC: GPU-accelerated Monte Carlo for 3D chromatin]{pMMC: fully GPU-accelerated multiscale Monte Carlo for three-dimensional chromatin structure reconstruction}
+
+\author[1]{Mohammad Nazmul Saqib}
+\author[2]{Kaustav Sengupta}
+\author[3,$\ast$]{Dariusz Plewczynski}
+
+\address[1]{\orgdiv{Interdisciplinary Doctoral School}, \orgname{University of Warsaw}, \orgaddress{\state{Warsaw}, \country{Poland}}}
+\address[2]{\orgdiv{Department of Information Processing Systems, Faculty of Mathematics and Information Sciences}, \orgname{Warsaw University of Technology}, \orgaddress{\state{Warsaw}, \country{Poland}}}
+\address[3]{\orgdiv{Laboratory of Functional and Structural Genomics, Centre of New Technologies}, \orgname{University of Warsaw}, \orgaddress{\street{Banacha 2c Street}, \postcode{02-097}, \state{Warsaw}, \country{Poland}}}
+
+\corresp[$\ast$]{Corresponding author. \href{email:d.plewczynski@cent.uw.edu.pl}{d.plewczynski@cent.uw.edu.pl}}
+
+\received{March}{15}{2026}
+
+%\editor{Associate Editor: Name}
+
+\abstract{
+\textbf{Motivation:} Computational reconstruction of three-dimensional (3D) chromatin structures from chromosome conformation capture experiments
+remains a computationally intensive task, particularly for large chromosomes and whole-genome analyses. Previous tools such as
+3D-GNOME and its GPU-extended variant cudaMMC accelerated the heatmap-level Monte Carlo phase using CUDA kernels but left
+the arc-distance and structural smoothing phases running on the CPU. This hybrid GPU--CPU design limits scalability
+for datasets comprising many interaction blocks per chromosome.\\
+\textbf{Results:} We present pMMC, a fully GPU-accelerated reimplementation of the multiscale Monte Carlo pipeline for 3D genome
+structure modelling. pMMC offloads all three Monte Carlo phases --- heatmap positioning, arc-distance optimization,
+and subanchor smoothing --- to dedicated CUDA kernels with warp-level simulated annealing. A persistent
+\texttt{GpuResourceCache} eliminates repeated GPU memory allocation overhead across interaction blocks.
+We benchmarked pMMC against cudaMMC and the original 3D-GNOME on three human chromosomes (chr1, chr14, chr21)
+from merged ChIA-PET data, running 10 replicate reconstructions per tool. pMMC achieved mean wall-clock times of
+4.92\,s (chr1), 4.27\,s (chr14), and 3.96\,s (chr21), compared with 7.49\,s, 5.27\,s, and 4.24\,s for cudaMMC, and
+67.0\,s, 14.7\,s, and 4.56\,s for 3D-GNOME, respectively. The speedup of pMMC over cudaMMC scales with chromosome
+size: 1.52$\times$ for chr1 but only 1.07$\times$ for chr21, which indicates that the GPU-offloaded phases
+contribute more substantially for larger inputs. Output structure quality, measured by pairwise Pearson correlation
+of distance matrices, was $r = 1.000$ between pMMC and cudaMMC across all chromosomes, confirming that pMMC
+preserves numerical equivalence of the reconstruction.\\
+\textbf{Availability and implementation:} Source code, benchmark data, and documentation are available at
+\url{https://github.com/SFGLab/pMMC}. pMMC is implemented in C++17/CUDA and builds on Linux with CMake.\\
+\textbf{Contact:} \href{email:d.plewczynski@cent.uw.edu.pl}{d.plewczynski@cent.uw.edu.pl}}
+
+\keywords{3D genome, chromatin structure, Monte Carlo, CUDA, GPU, ChIA-PET}
+
+\maketitle
+
+\section{Introduction}
+
+Spatial organisation of chromatin inside the cell nucleus plays a central role in the regulation
+of gene expression, DNA replication and repair \citep{zheng2018threed}. Chromosome conformation capture
+techniques, including Hi-C and ChIA-PET, provide pairwise interaction frequencies that can be converted
+into spatial restraints for 3D structure modelling \citep{rousseau2011threed}. Polymer-physics-based
+approaches describe chromatin as a bead-spring chain and employ stochastic optimisation to satisfy
+distance restraints derived from these interaction data \citep{rosa2016polymer}.
+
+Several tools have been developed for this purpose. 3D-GNOME \citep{szalaj2016threed, szalaj2023threed3}
+implements a multiscale Monte Carlo algorithm that reconstructs chromatin structures at four hierarchical
+levels --- whole genome, chromosome, segment (topologically associating domain), and interaction
+block --- using simulated annealing at each resolution. Loop extrusion and compartmental segregation
+provide complementary biological frameworks for interpreting the resulting structures
+\citep{bohnuud2018formation, nuebler2018chromatin}. cudaMMC \citep{saqib2023cudammc} accelerated the
+coarsest Monte Carlo phase (heatmap-level positioning) on the GPU, while arc-distance and structural
+smoothing remained on the CPU.
+
+Several recent methods also model chromatin at multiple scales. MultiMM \citep{neguembor2024multimm}
+builds coarse-grained to nucleosome-resolution models; LoopSage \citep{sakaue2024loopsage} uses
+energy-based Monte Carlo for loop extrusion; the integrated 3D-GNOME engine
+\citep{plewczynski2026integrated} extends the original web service with GPU support. Earlier work
+demonstrated that GPU-based Monte Carlo sampling can provide substantial acceleration for polymer
+simulations \citep{lee2010utility, lutz2012massively}, and population-based genome structure analysis
+has been used to study the forces driving spatial organisation
+\citep{collepardo2020population}.
+
+Here we present pMMC, a complete GPU-accelerated reimplementation. pMMC offloads all three Monte Carlo phases
+to CUDA kernels with warp-level parallelism, introduces a persistent GPU resource cache that avoids repeated
+memory allocation, and adds several features including MDS-based initialisation, multiple output formats
+(mmCIF, PDB), and a built-in benchmarking framework with structural quality metrics.
+
+\section{Materials and methods}
+
+\subsection{3D-GNOME --- CPU-oriented approach}
+
+The original 3D-GNOME pipeline \citep{szalaj2016threed} models chromatin as a four-level hierarchical tree of
+beads: whole chromosome, segments (${\sim}\,2$\,Mb), interaction blocks bounded by ChIA-PET anchors, and
+subanchor beads interpolated between anchors. At each level the algorithm converts interaction frequencies to
+expected spatial distances using a power-law mapping ($d = a \cdot f^{-c}$), constructs a distance matrix,
+and applies simulated annealing Monte Carlo optimisation to minimise the discrepancy between actual and
+expected inter-bead distances. The energy function includes distance-based, loop-energy, structural
+smoothness, and orientation scoring components. All computations in the original 3D-GNOME run on the CPU, and
+the three Monte Carlo phases are executed sequentially for every interaction block in every segment.
+
+\subsection{cudaMMC approach --- GPU-extended}
+
+cudaMMC \citep{saqib2023cudammc} introduced a GPU kernel (\texttt{ParallelMonteCarloHeatmap}) for the first
+Monte Carlo phase, which positions chromosome territories and segments using singleton heatmap data. This
+kernel launches multiple CUDA threads that each perform independent simulated annealing trajectories, with FP16
+bead positions and FP32 energy evaluation, and selects the best-scoring trajectory at the end. A second
+kernel (\texttt{ParallelMarkArcs}) parallelises the mapping of genomic-coordinate arcs to anchor indices.
+However, the arc-distance and smoothing Monte Carlo phases remain on the CPU in cudaMMC. For larger
+chromosomes with many interaction blocks (e.g.\ chr1 with 125 segments), these CPU-bound phases dominate
+the total runtime.
+
+\subsection{pMMC approach --- GPU-oriented, optimised, and additional features}
+
+pMMC replaces the CPU arc-distance and smoothing phases with two new CUDA kernels and introduces several
+architectural improvements.
+
+\paragraph{ParallelMonteCarloArcs kernel.}
+This kernel implements warp-level simulated annealing for anchor positioning. Each warp (32 threads) runs an
+independent SA trajectory: thread~0 selects beads and proposes random displacements, while all 32 threads
+cooperate on energy evaluation using warp-shuffle reduction. The energy function penalises the squared
+relative deviation of inter-bead distances from expected values derived from PET cluster counts, with
+separate spring constants for stretched and compressed distances. The grid is sized to
+$N_\text{SM}$ blocks of 128 threads (4 warps per block), where $N_\text{SM}$ is the number of streaming
+multiprocessors. Shared memory stores per-warp position arrays. After convergence, the positions from the
+best-scoring warp are transferred back to the host.
+
+\paragraph{ParallelMonteCarloSmooth kernel.}
+This kernel smooths the subanchor bead chain using local energy evaluation. Each block contains a single
+warp (32 threads) and processes one smoothing trajectory. The energy function sums bond-length penalties
+(spring model with stretch and squeeze constants) and angular bending penalties (proportional to
+$1 - \cos\theta$ at each bead triple). Because only bonds and angles involving the moved bead need
+recomputation, each step costs $O(1)$ instead of $O(n)$. The grid uses $2 \times N_\text{SM}$ blocks.
+Milestone-based convergence detection terminates the SA when score improvement stalls for a configurable
+number of consecutive checkpoints.
+
+\paragraph{GpuResourceCache.}
+A critical optimisation in pMMC is the \texttt{GpuResourceCache} class, which allocates curandState arrays,
+isDone flags, and working buffers once at programme startup and reuses them across all interaction blocks
+within and between chromosomes. In cudaMMC, every invocation of the heatmap kernel incurred a
+\texttt{cudaMalloc}/\texttt{cudaFree} cycle for random-number-generator states and output arrays. For chr1,
+which contains 125 interaction blocks and therefore triggers ${\sim}\,284$ kernel calls, this repeated
+allocation overhead was substantial. The cache eliminates it entirely, yielding especially large gains for
+chromosomes with many segments.
+
+\paragraph{Additional features.}
+pMMC supports MDS-based initialisation of bead positions via classical Torgerson multidimensional scaling, as
+an alternative to random placement. It exports reconstructed structures in mmCIF and PDB formats in addition
+to the native HCM format. A built-in benchmarking framework (\texttt{BenchmarkRunner}) with synthetic data
+generation and structural quality metrics (RMSD, Pearson~$r$, stratum-adjusted correlation) enables
+systematic evaluation. Deterministic reproducibility is ensured through controlled seeding of both CPU and
+GPU random-number generators.
+
+\subsection{Chromatin interaction data}
+
+We used merged ChIA-PET data from blood lymphoblast cells for three human chromosomes of varying size:
+chr1 (125 segments), chr14 (54 segments), and chr21 (25 segments). Anchors, PET clusters, singletons,
+and segment boundaries were provided in standard BED/BEDPE format. All tools used the same input data and,
+where applicable, equivalent configuration parameters for simulated annealing schedules.
+
+\section{Comparison of performance between pMMC vs cudaMMC and 3D-GNOME}
+
+We benchmarked three tools --- 3D-GNOME (denoted 3dome\_mmc), cudaMMC, and pMMC --- on the same hardware
+(NVIDIA RTX~4070, 12\,GB VRAM, 46 SMs; AMD Ryzen 7 CPU, 32\,GB RAM) using 10 replicate runs per
+tool per chromosome with GPU utilisation and memory monitored continuously.
+
+\paragraph{Wall-clock time.}
+Table~\ref{tab:walltime} reports mean wall-clock times. 3D-GNOME was the slowest in all cases, reaching
+67.0\,s for chr1 where CPU-only Monte Carlo over 125 segments dominates. cudaMMC reduced this to 7.49\,s
+via the GPU heatmap kernel, but the CPU-bound arc and smooth phases still contributed the majority of time
+for larger chromosomes. pMMC further reduced the chr1 runtime to 4.92\,s --- a 1.52$\times$ speedup over
+cudaMMC and a 13.6$\times$ speedup over 3D-GNOME. For the smallest chromosome (chr21), the improvement
+over cudaMMC was marginal (1.07$\times$), because the arc and smooth phases constitute a smaller fraction
+of the total time when there are only 25 segments.
+
+\begin{table}[!t]
+\begin{center}
+\begin{minipage}{\columnwidth}
+\caption{Mean wall-clock time (seconds) over 10 replicate runs for each tool and chromosome.
+Standard deviations are shown in parentheses.\label{tab:walltime}}%
+\begin{tabular*}{\columnwidth}{@{\extracolsep\fill}lrrr@{\extracolsep\fill}}
+\toprule
+Tool & chr1 & chr14 & chr21 \\
+\midrule
+3D-GNOME   & 67.00 (1.07) & 14.71 (0.55) & 4.56 (0.26) \\
+cudaMMC    &  7.49 (0.31) &  5.27 (0.34) & 4.24 (0.33) \\
+pMMC       &  4.92 (0.31) &  4.27 (0.27) & 3.96 (0.27) \\
+\midrule
+pMMC/cudaMMC & 1.52$\times$ & 1.23$\times$ & 1.07$\times$ \\
+pMMC/3D-GNOME & 13.6$\times$ & 3.45$\times$ & 1.15$\times$ \\
+\botrule
+\end{tabular*}
+\end{minipage}
+\end{center}
+\end{table}
+
+Figure~\ref{fig:combined} (a) shows the wall-clock time distribution across chromosomes, and (b) presents
+the speedup factors.
+
+\begin{figure*}[!t]%
+\centering
+\includegraphics[width=0.48\textwidth]{wall_time_by_chromosome.png}\hfill
+\includegraphics[width=0.48\textwidth]{speedup_factor.png}
+\caption{(a)~Wall-clock time by chromosome for the three tools. (b)~Speedup factor of pMMC relative to
+cudaMMC and 3D-GNOME, shown per chromosome. Error bars indicate standard deviation across 10 runs.}\label{fig:combined}
+\end{figure*}
+
+\paragraph{Scalability.}
+Figure~\ref{fig:scaling} shows the scaling regression and whole-genome scalability projection. The
+ratio of chr1 to chr21 wall time reveals the scaling behaviour: 3D-GNOME exhibits a ratio of 14.7$\times$,
+cudaMMC 1.77$\times$, and pMMC 1.24$\times$. The near-flat profile of pMMC indicates that its
+runtime is dominated by a fixed overhead (GPU initialisation, I/O) rather than by computation that scales
+with the number of interaction blocks. This characteristic makes pMMC especially suitable for whole-genome
+reconstruction, where many large chromosomes must be processed.
+
+\begin{figure*}[!t]%
+\centering
+\includegraphics[width=0.48\textwidth]{scaling_regression.png}\hfill
+\includegraphics[width=0.48\textwidth]{scalability_grch38.png}
+\caption{(a)~Scaling regression of wall-clock time vs.\ number of segments. (b)~Projected
+wall-clock time for all GRCh38 chromosomes (extrapolated from regression).}\label{fig:scaling}
+\end{figure*}
+
+\paragraph{Output quality.}
+The pairwise Pearson correlation of distance matrices between pMMC and cudaMMC outputs was
+$r = 1.000$ for all three chromosomes, indicating numerically identical structures when the same random
+seed is used. Intra-tool consistency was also $r = 1.000$ for pMMC across different runs with the
+same seed, confirming full deterministic reproducibility. Figure~\ref{fig:quality} shows the output
+quality heatmap.
+Beyond single-model equivalence, we assessed structural consistency across 50-model ensembles
+for chr1. The median pairwise Spearman correlation of distance matrices was $\rho = 0.86$ for pMMC
+ensembles versus $\rho = 0.59$ for cudaMMC, indicating that pMMC produces more structurally coherent
+model populations. Ensemble generation was also faster: pMMC completed 50 models in 243\,s compared
+with 375\,s for cudaMMC and 3307\,s for 3D-GNOME, corresponding to a $1.54\times$ speedup over
+cudaMMC and $13.6\times$ over 3D-GNOME at ensemble scale.
+
+\begin{figure*}[!t]%
+\centering
+\includegraphics[width=0.48\textwidth]{output_quality_heatmap.png}\hfill
+\includegraphics[width=0.48\textwidth]{phase_breakdown.png}
+\caption{(a)~Output quality heatmap: Pearson correlation of pairwise distance matrices between tools.
+(b)~Phase breakdown showing time distribution across Monte Carlo phases.}\label{fig:quality}
+\end{figure*}
+
+\paragraph{Resource utilisation.}
+Table~\ref{tab:resources} summarises GPU and memory statistics. All three tools use comparable peak VRAM
+(${\sim}\,760$--$1050$\,MB). Peak RSS is ${\sim}\,12$\,MB for 3D-GNOME (which barely uses the GPU) vs.\
+${\sim}\,107$\,MB for pMMC and cudaMMC. The mean GPU utilisation of pMMC (0.9--5.1\%) and cudaMMC (2.0--2.4\%)
+reflects the short burst nature of the GPU kernels; the low sustained utilisation is expected because each
+kernel runs for only tens to hundreds of milliseconds before returning control to the CPU for the next
+interaction block.
+
+\begin{table}[!t]
+\caption{Resource utilisation (mean across 10 runs for chr1).\label{tab:resources}}%
+\begin{tabular*}{\columnwidth}{@{\extracolsep\fill}lccc@{\extracolsep\fill}}
+\toprule
+Metric & 3D-GNOME & cudaMMC & pMMC \\
+\midrule
+Peak RSS (MB)          & 11.8  & 106.7  & 104.6 \\
+Peak VRAM (MB)         & 979.7 & 1028.7 & 930.8 \\
+Mean GPU util.\ (\%)   & 3.0   & 2.4    & 3.2   \\
+Mean power (W)         & 9.7   & 17.2   & 22.5  \\
+CPU util.\ (\%)        & 95.7  & 63.7   & 40.8  \\
+\botrule
+\end{tabular*}
+\end{table}
+
+\paragraph{Coefficient of variation and runtime distribution.}
+The coefficient of variation (CV) of wall-clock time was below 8\% for all tools across all chromosomes
+(Figure~\ref{fig:runtime}), indicating stable performance. The lowest CV was observed for 3D-GNOME
+(1.6\% for chr1), consistent with a fully deterministic CPU-bound computation, whereas pMMC exhibited
+slightly higher variance (6.2\% for chr1) due to GPU scheduling non-determinism.
+
+\begin{figure*}[!t]%
+\centering
+\includegraphics[width=0.48\textwidth]{runtime_distribution.png}\hfill
+\includegraphics[width=0.48\textwidth]{peak_ram.png}
+\caption{(a)~Runtime distribution across 10 replicate runs. (b)~Peak RAM usage comparison across tools
+and chromosomes.}\label{fig:runtime}
+\end{figure*}
+
+\section{Conclusions}
+
+We have presented pMMC, a fully GPU-accelerated tool for multiscale Monte Carlo reconstruction of 3D
+chromatin structures. By offloading all three SA phases to CUDA kernels and employing a persistent
+GPU resource cache, pMMC achieves up to 1.52$\times$ speedup over cudaMMC and 13.6$\times$ over the
+original CPU-based 3D-GNOME, with the advantage growing for larger chromosomes. Output quality is
+numerically identical to cudaMMC ($r = 1.000$), and 50-model ensembles exhibit higher structural
+consistency (median Spearman $\rho = 0.86$ vs.\ $0.59$). pMMC further offers MDS
+initialisation, mmCIF/PDB export, and built-in benchmarking. These improvements make pMMC a practical
+tool for whole-genome-scale 3D structure modelling from ChIA-PET data.
+
+\section*{Data availability}
+The ChIA-PET interaction data used for benchmarking are available in the project repository.
+Reconstructed 3D structures in HCM, mmCIF, and PDB formats are included in the benchmark output
+directory.
+
+\section*{Conflict of interest}
+None declared.
+
+\section*{Funding}
+This project received no external funding.
+
+\section*{Author contributions statement}
+M.N.S.\ conceived and implemented pMMC, conducted benchmark experiments, and drafted the manuscript.
+K.S.\ supervised the benchmarking process and reviewed the manuscript. D.P.\ conceived the project. All authors read and approved the final version.
+
+\section*{Acknowledgments}
+Computational resources were provided by M.N.S.'s personal hardware.
+
+\bibliographystyle{oup-abbrvnat}
+\bibliography{references}
+
+\end{document}
