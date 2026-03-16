@@ -2,67 +2,65 @@
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
-\citation{zheng2018threed}
-\citation{rousseau2011threed}
-\citation{rosa2016polymer}
-\citation{szalaj2016threed,szalaj2023threed3}
-\citation{bohnuud2018formation,nuebler2018chromatin}
-\citation{saqib2023cudammc}
-\citation{neguembor2024multimm}
-\citation{sakaue2024loopsage}
-\citation{plewczynski2026integrated}
-\citation{lee2010utility,lutz2012massively}
-\citation{collepardo2020population}
+\citation{Szalaj2018organization}
+\citation{Fudenberg2016loop,Nuebler2018chromatin}
+\citation{Chiariello2016polymer,Tjong2016population}
+\citation{Rousseau2011chromatin}
+\citation{Korsak2024multimm,Korsak2024loopsage}
+\citation{Szalaj2016engine}
+\citation{Szalaj2016gnome,Wlasnowolski2023gnome}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
-\citation{szalaj2016threed}
-\citation{saqib2023cudammc}
+\citation{Wlasnowolski2023cudammc}
+\citation{Lee2010gpu,Gross2011parallel}
+\citation{Szalaj2016engine}
+\citation{Wlasnowolski2023cudammc}
 \@writefile{toc}{\contentsline {section}{\numberline {2}Materials and methods}{2}{section.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {{2.1}}3D-GNOME --- CPU-oriented approach}{2}{subsection.2.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {{2.2}}cudaMMC approach --- GPU-extended}{2}{subsection.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {{2.3}}pMMC approach --- GPU-oriented, optimised, and additional features}{2}{subsection.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{ParallelMonteCarloArcs kernel.}{2}{section*.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{ParallelMonteCarloSmooth kernel.}{2}{section*.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{GpuResourceCache.}{2}{section*.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Additional features.}{2}{section*.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {{2.4}}Chromatin interaction data}{2}{subsection.2.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Comparison of performance between pMMC vs cudaMMC and 3D-GNOME}{2}{section.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces (a)~Wall-clock time by chromosome for the three tools. (b)~Speedup factor of pMMC relative to cudaMMC and 3D-GNOME, shown per chromosome. Error bars indicate standard deviation across 10 runs.}}{3}{figure.caption.7}\protected@file@percent }
-\newlabel{fig:combined}{{1}{3}{(a)~Wall-clock time by chromosome for the three tools. (b)~Speedup factor of pMMC relative to cudaMMC and 3D-GNOME, shown per chromosome. Error bars indicate standard deviation across 10 runs}{figure.caption.7}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Mean wall-clock time (seconds) over 10 replicate runs for each tool and chromosome. Standard deviations are shown in parentheses.}}{3}{table.caption.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Pipeline of the pMMC fully GPU-accelerated multiscale Monte Carlo algorithm for chromatin 3D structure reconstruction. Input ChIA-PET data are parsed into a four-level hierarchical tree. Three successive CUDA kernel stages refine the structure from coarse territory placement to fine-grained polymer smoothing. A persistent GPU resource cache eliminates per-segment allocation overhead, and a composite energy function guides the simulated annealing at each level.}}{2}{figure.caption.1}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{tab:walltime}{{1}{3}{Mean wall-clock time (seconds) over 10 replicate runs for each tool and chromosome. Standard deviations are shown in parentheses}{table.caption.6}{}}
-\@writefile{toc}{\contentsline {paragraph}{Wall-clock time.}{3}{section*.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Scalability.}{3}{section*.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Output quality.}{3}{section*.10}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Resource utilisation (mean across 10 runs for chr1).}}{3}{table.caption.13}\protected@file@percent }
-\newlabel{tab:resources}{{2}{3}{Resource utilisation (mean across 10 runs for chr1)}{table.caption.13}{}}
-\@writefile{toc}{\contentsline {paragraph}{Resource utilisation.}{3}{section*.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Coefficient of variation and runtime distribution.}{3}{section*.14}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces (a)~Scaling regression of wall-clock time vs.\ number of segments. (b)~Projected wall-clock time for all GRCh38 chromosomes (extrapolated from regression).}}{4}{figure.caption.9}\protected@file@percent }
-\newlabel{fig:scaling}{{2}{4}{(a)~Scaling regression of wall-clock time vs.\ number of segments. (b)~Projected wall-clock time for all GRCh38 chromosomes (extrapolated from regression)}{figure.caption.9}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces (a)~Output quality heatmap: Pearson correlation of pairwise distance matrices between tools. (b)~Phase breakdown showing time distribution across Monte Carlo phases.}}{4}{figure.caption.11}\protected@file@percent }
-\newlabel{fig:quality}{{3}{4}{(a)~Output quality heatmap: Pearson correlation of pairwise distance matrices between tools. (b)~Phase breakdown showing time distribution across Monte Carlo phases}{figure.caption.11}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces (a)~Runtime distribution across 10 replicate runs. (b)~Peak RAM usage comparison across tools and chromosomes.}}{4}{figure.caption.15}\protected@file@percent }
-\newlabel{fig:runtime}{{4}{4}{(a)~Runtime distribution across 10 replicate runs. (b)~Peak RAM usage comparison across tools and chromosomes}{figure.caption.15}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Conclusions}{4}{section.4}\protected@file@percent }
+\newlabel{fig:pipeline}{{1}{2}{Pipeline of the pMMC fully GPU-accelerated multiscale Monte Carlo algorithm for chromatin 3D structure reconstruction. Input ChIA-PET data are parsed into a four-level hierarchical tree. Three successive CUDA kernel stages refine the structure from coarse territory placement to fine-grained polymer smoothing. A persistent GPU resource cache eliminates per-segment allocation overhead, and a composite energy function guides the simulated annealing at each level}{figure.caption.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {{2.3}}pMMC approach --- GPU-oriented, optimised, and additional features}{2}{subsection.2.3}\protected@file@percent }
+\citation{Wlasnowolski2023gnome}
+\@writefile{toc}{\contentsline {subsection}{\numberline {{2.4}}Chromatin interaction data}{3}{subsection.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Comparison of performance between pMMC vs cudaMMC and 3D-GNOME}{3}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Wall-clock time.}{3}{section*.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Mean wall-clock time (seconds) and coefficient of variation (CV) over 10 replicate runs.}}{3}{table.caption.3}\protected@file@percent }
+\newlabel{tab:walltime}{{1}{3}{Mean wall-clock time (seconds) and coefficient of variation (CV) over 10 replicate runs}{table.caption.3}{}}
+\@writefile{toc}{\contentsline {paragraph}{Scalability.}{3}{section*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Output quality.}{3}{section*.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces (a)~Wall-clock time by chromosome for the three tools across 10 replicate runs. (b)~Speedup factor of pMMC relative to cudaMMC and 3D-GNOME, shown per chromosome. Error bars indicate standard deviation across 10 runs.}}{4}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:combined}{{2}{4}{(a)~Wall-clock time by chromosome for the three tools across 10 replicate runs. (b)~Speedup factor of pMMC relative to cudaMMC and 3D-GNOME, shown per chromosome. Error bars indicate standard deviation across 10 runs}{figure.caption.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces (a)~Scaling regression of wall-clock time vs.\ number of segments for the primary benchmark. (b)~Scalability comparison across all human autosomes and chromosome~X on GRCh38 data (3 runs per chromosome). pMMC (blue) maintains near-constant wall-clock time regardless of chromosome size, whereas cudaMMC (red) exhibits size-dependent scaling.}}{4}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:scaling}{{3}{4}{(a)~Scaling regression of wall-clock time vs.\ number of segments for the primary benchmark. (b)~Scalability comparison across all human autosomes and chromosome~X on GRCh38 data (3 runs per chromosome). pMMC (blue) maintains near-constant wall-clock time regardless of chromosome size, whereas cudaMMC (red) exhibits size-dependent scaling}{figure.caption.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces (a)~Output quality heatmap: Pearson correlation of pairwise distance matrices between tools and across chromosomes. (b)~Phase breakdown showing time distribution across Monte Carlo phases for each tool, illustrating how pMMC shifts the computational burden from CPU to GPU.}}{4}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:quality}{{4}{4}{(a)~Output quality heatmap: Pearson correlation of pairwise distance matrices between tools and across chromosomes. (b)~Phase breakdown showing time distribution across Monte Carlo phases for each tool, illustrating how pMMC shifts the computational burden from CPU to GPU}{figure.caption.8}{}}
+\@writefile{toc}{\contentsline {paragraph}{Ensemble modelling.}{4}{section*.9}\protected@file@percent }
+\citation{Wlasnowolski2023gnome}
 \bibstyle{oup-abbrvnat}
 \bibdata{references}
-\bibcite{bohnuud2018formation}{{1}{2016}{{Fudenberg et~al.}}{{Fudenberg, Imakaev, Lu, Goloborodko, Abdennur, and Mirny}}}
-\bibcite{collepardo2020population}{{2}{2016}{{Hua et~al.}}{{Hua, Tjong, Shin, Gong, Zhou, and Alber}}}
-\bibcite{sakaue2024loopsage}{{3}{2024}{{Korsak and Plewczynski}}{{}}}
-\bibcite{lee2010utility}{{4}{2010}{{Lee et~al.}}{{Lee, Yau, Giles, Doucet, and Holmes}}}
-\bibcite{lutz2012massively}{{5}{2012}{{Lutz et~al.}}{{Lutz, Sinner, Heuber, Verma, and Schug}}}
-\bibcite{neguembor2024multimm}{{6}{2024}{{Neguembor et~al.}}{{Neguembor, Arco, Escobar, and Marti-Renom}}}
-\bibcite{nuebler2018chromatin}{{7}{2018}{{Nuebler et~al.}}{{Nuebler, Fudenberg, Imakaev, Abdennur, and Mirny}}}
-\bibcite{plewczynski2026integrated}{{8}{2026}{{Plewczynski et~al.}}{{Plewczynski, Szalaj, Saqib, and Sengupta}}}
-\bibcite{rosa2016polymer}{{9}{2016}{{Rosa and Zimmer}}{{}}}
-\bibcite{rousseau2011threed}{{10}{2011}{{Rousseau et~al.}}{{Rousseau, Fraser, Ferraiuolo, Dostie, and Bhyl}}}
-\bibcite{saqib2023cudammc}{{11}{2023}{{Saqib et~al.}}{{Saqib, Sengupta, and Plewczynski}}}
-\bibcite{szalaj2016threed}{{12}{2016}{{Szalaj et~al.}}{{Szalaj, Tang, Michalski, Pietal, Luo, Sadowski, Li, Ruan, and Plewczynski}}}
-\bibcite{szalaj2023threed3}{{13}{2023}{{Szalaj et~al.}}{{Szalaj, Michalski, Sadowski, Tang, Ruan, and Plewczynski}}}
-\bibcite{zheng2018threed}{{14}{2018}{{Zheng and Zheng}}{{}}}
-\global\@namedef{@lastpage@}{5}
+\bibcite{Chiariello2016polymer}{{1}{2016}{{Chiariello et~al.}}{{Chiariello, Annunziatella, Bianco, Esposito, and Nicodemi}}}
+\bibcite{Fudenberg2016loop}{{2}{2016}{{Fudenberg et~al.}}{{Fudenberg, Imakaev, Lu, Goloborodko, Abdennur, and Mirny}}}
+\bibcite{Gross2011parallel}{{3}{2011}{{Gross et~al.}}{{Gross, Janke, and Bachmann}}}
+\bibcite{Korsak2024loopsage}{{4}{2024}{{Korsak and Plewczynski}}{{}}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Pairwise similarity distributions within ensembles of 50 models for chromosome~21. pMMC produces ensembles with higher inter-model consistency (median similarity 0.86, mean 0.86) than cudaMMC (median 0.59, mean 0.58).}}{5}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:similarity}{{5}{5}{Pairwise similarity distributions within ensembles of 50 models for chromosome~21. pMMC produces ensembles with higher inter-model consistency (median similarity 0.86, mean 0.86) than cudaMMC (median 0.59, mean 0.58)}{figure.caption.10}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Resource utilisation (mean across 10 runs for chr1).}}{5}{table.caption.12}\protected@file@percent }
+\newlabel{tab:resources}{{2}{5}{Resource utilisation (mean across 10 runs for chr1)}{table.caption.12}{}}
+\@writefile{toc}{\contentsline {paragraph}{Resource utilisation.}{5}{section*.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Conclusions}{5}{section.4}\protected@file@percent }
+\bibcite{Korsak2024multimm}{{5}{2024}{{Korsak et~al.}}{{Korsak, Banecki, and Plewczynski}}}
+\bibcite{Lee2010gpu}{{6}{2010}{{Lee et~al.}}{{Lee, Yau, Giles, Doucet, and Holmes}}}
+\bibcite{Nuebler2018chromatin}{{7}{2018}{{Nuebler et~al.}}{{Nuebler, Fudenberg, Imakaev, Abdennur, and Mirny}}}
+\bibcite{Rousseau2011chromatin}{{8}{2011}{{Rousseau et~al.}}{{Rousseau, Fraser, Ferraiuolo, Dostie, and Blanchette}}}
+\bibcite{Szalaj2018organization}{{9}{2018}{{Szalaj and Plewczynski}}{{}}}
+\bibcite{Szalaj2016gnome}{{10}{2016{a}}{{Szalaj et~al.}}{{Szalaj, Michalski, Wr\'{o}blewski, Tang, Kadlof, Mazzocco, Ruan, and Plewczynski}}}
+\bibcite{Szalaj2016engine}{{11}{2016{b}}{{Szalaj et~al.}}{{Szalaj, Tang, Michalski, Pietal, Luo, Sadowski, Li, Radew, Ruan, and Plewczynski}}}
+\bibcite{Tjong2016population}{{12}{2016}{{Tjong et~al.}}{{Tjong, Li, Kalhor, Dai, Hao, Gong, Zhou, Li, Zhou, Le~Gros, Larabell, Chen, and Alber}}}
+\bibcite{Wlasnowolski2023cudammc}{{13}{2023{a}}{{Wlasnowolski et~al.}}{{Wlasnowolski, Grabowski, Roszczyk, Kaczmarski, and Plewczynski}}}
+\bibcite{Wlasnowolski2023gnome}{{14}{2023{b}}{{Wlasnowolski et~al.}}{{Wlasnowolski, Kadlof, Sengupta, and Plewczynski}}}
+\global\@namedef{@lastpage@}{6}
 \expandafter\ifx\csname c@myauthcount@totc\endcsname\relax\newcounter{myauthcount@totc}\fi\setcounter{myauthcount@totc}{3}
 \expandafter\ifx\csname c@myhistorycount@totc\endcsname\relax\newcounter{myhistorycount@totc}\fi\setcounter{myhistorycount@totc}{1}
 \expandafter\ifx\csname c@myaddcount@totc\endcsname\relax\newcounter{myaddcount@totc}\fi\setcounter{myaddcount@totc}{3}
-\gdef \@abspage@last{5}
+\gdef \@abspage@last{6}
